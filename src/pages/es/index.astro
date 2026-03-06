@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const chapters = [
+  {
+    slug: 'es-el-despertar',
+    data: {
+      title: 'El Despertar',
+      description: 'Kaira descubre su habilidad para caminar entre épocas',
+      pubDate: new Date('2026-03-01'),
+      lang: 'es'
+    }
+  },
+  {
+    slug: 'es-el-primer-paso',
+    data: {
+      title: 'El Primer Paso',
+      description: 'Kaira aprende a controlar, parcialmente, sus saltos temporales',
+      pubDate: new Date('2026-03-02'),
+      lang: 'es'
+    }
+  },
+  {
+    slug: 'es-la-confluencia',
+    data: {
+      title: 'La Confluencia',
+      description: 'Kaira encuentra a otro viajero temporal',
+      pubDate: new Date('2026-03-03'),
+      lang: 'es'
+    }
+  }
+];
+
+const sortedChapters = chapters.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+const latestChapter = sortedChapters[sortedChapters.length - 1];
+const olderChapters = sortedChapters.slice(0, -1).reverse();
+---
+
+<BaseLayout title="Inicio" lang="es">
+  <main class="container-narrow py-8 md:py-12">
+    <h1 class="mb-6">TimeCrawler</h1>
+    <p class="text-lg text-text-secondary mb-12">
+      Bienvenido a TimeCrawler, el web serial sobre Kaira, la Cronocaminante.
+    </p>
+
+    {latestChapter && (
+      <section class="mb-12">
+        <h2 class="text-2xl mb-4">Último capítulo</h2>
+        <a 
+          href={`/es/capitulos/${latestChapter.slug}/`}
+          class="block p-6 border border-accent/20 rounded-lg hover:border-accent transition-colors"
+        >
+          <h3 class="text-xl mb-2 text-text-primary">{latestChapter.data.title}</h3>
+          <p class="text-sm text-text-secondary mb-3">
+            {new Date(latestChapter.data.pubDate).toLocaleDateString('es-ES', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </p>
+          <p class="text-text-secondary">{latestChapter.data.description}</p>
+        </a>
+      </section>
+    )}
+
+    {olderChapters.length > 0 && (
+      <section>
+        <h2 class="text-2xl mb-4">Capítulos anteriores</h2>
+        <div class="space-y-4">
+          {olderChapters.map((chapter) => (
+            <a 
+              href={`/es/capitulos/${chapter.slug}/`}
+              class="block p-4 border border-accent/10 rounded hover:border-accent/30 transition-colors"
+            >
+              <h3 class="text-lg mb-1 text-text-primary">{chapter.data.title}</h3>
+              <p class="text-sm text-text-secondary mb-2">
+                {new Date(chapter.data.pubDate).toLocaleDateString('es-ES', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+              <p class="text-text-secondary text-sm">{chapter.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</BaseLayout>

@@ -1,0 +1,6 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const lang = Astro.currentLocale || 'es';
+return Astro.redirect(`/${lang}/`);
+---

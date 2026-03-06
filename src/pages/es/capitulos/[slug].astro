@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const chapters = await getCollection('chapters', ({ data }) => {
+    return data.lang === 'es';
+  });
+  
+  return chapters.map((chapter) => ({
+    params: { slug: chapter.slug },
+    props: { chapter },
+  }));
+}
+
+const { chapter } = Astro.props;
+const { Content } = await chapter.render();
+
+const allChapters = await getCollection('chapters', ({ data }) => {
+  return data.lang === 'es';
+});
+
+const sortedChapters = allChapters.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+const currentIndex = sortedChapters.findIndex((c) => c.slug === chapter.slug);
+const prevChapter = currentIndex > 0 ? sortedChapters[currentIndex - 1] : null;
+const nextChapter = currentIndex < sortedChapters.length - 1 ? sortedChapters[currentIndex + 1] : null;
+---
+
+<BaseLayout title={chapter.data.title} lang="es">
+  <main class="container-narrow py-8 md:py-12">
+    <article>
+      <header class="mb-8">
+        <h1 class="mb-4">{chapter.data.title}</h1>
+        <p class="text-text-secondary">
+          {new Date(chapter.data.pubDate).toLocaleDateString('es-ES', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </p>
+      </header>
+      
+      <div class="prose prose-lg max-w-none">
+        <Content />
+      </div>
+    </article>
+
+    <nav class="mt-12 pt-8 border-t border-accent/20">
+      <div class="flex justify-between gap-4">
+        {prevChapter ? (
+          <a 
+            href={`/es/capitulos/${prevChapter.slug}/`}
+            class="flex-1 p-4 border border-accent/10 rounded hover:border-accent/30 transition-colors"
+          >
+            <p class="text-sm text-text-secondary mb-1">← Anterior</p>
+            <p class="text-text-primary">{prevChapter.data.title}</p>
+          </a>
+        ) : (
+          <div class="flex-1"></div>
+        )}
+        
+        {nextChapter ? (
+          <a 
+            href={`/es/capitulos/${nextChapter.slug}/`}
+            class="flex-1 p-4 border border-accent/10 rounded hover:border-accent/30 transition-colors text-right"
+          >
+            <p class="text-sm text-text-secondary mb-1">Siguiente →</p>
+            <p class="text-text-primary">{nextChapter.data.title}</p>
+          </a>
+        ) : (
+          <div class="flex-1"></div>
+        )}
+      </div>
+    </nav>
+  </main>
+</BaseLayout>
+
+<style>
+  .prose h1 {
+    display: none;
+  }
+</style>

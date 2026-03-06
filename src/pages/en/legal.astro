@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const pages = await getCollection('sitepages');
+const pageData = pages?.find(p => p.slug === 'en-legal');
+
+if (!pageData) {
+  return Astro.redirect('/en/');
+}
+
+const { Content } = await pageData.render();
+---
+
+<BaseLayout title={pageData.data.title} lang="en">
+  <main class="container-narrow py-8 md:py-12">
+    <article>
+      <Content />
+    </article>
+  </main>
+</BaseLayout>

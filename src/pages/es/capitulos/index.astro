@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const chapters = await getCollection('chapters', ({ data }) => {
+  return data.lang === 'es';
+});
+
+const sortedChapters = chapters.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Capítulos" lang="es">
+  <main class="container-narrow py-8 md:py-12">
+    <h1 class="mb-8">Capítulos</h1>
+    
+    <div class="space-y-6">
+      {sortedChapters.map((chapter) => (
+        <a 
+          href={`/es/capitulos/${chapter.slug}/`}
+          class="block p-6 border border-accent/20 rounded-lg hover:border-accent transition-colors"
+        >
+          <h2 class="text-xl mb-2 text-text-primary">{chapter.data.title}</h2>
+          <p class="text-sm text-text-secondary mb-3">
+            {new Date(chapter.data.pubDate).toLocaleDateString('es-ES', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </p>
+          <p class="text-text-secondary">{chapter.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>

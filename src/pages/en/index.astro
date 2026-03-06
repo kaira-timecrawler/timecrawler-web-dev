@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const chapters = [
+  {
+    slug: 'the-awakening',
+    data: {
+      title: 'The Awakening',
+      description: 'Kaira discovers her ability to walk between eras',
+      pubDate: new Date('2026-03-01'),
+      lang: 'en'
+    }
+  },
+  {
+    slug: 'the-first-step',
+    data: {
+      title: 'The First Step',
+      description: 'Kaira learns to control, partially, her temporal jumps',
+      pubDate: new Date('2026-03-02'),
+      lang: 'en'
+    }
+  },
+  {
+    slug: 'the-confluence',
+    data: {
+      title: 'The Confluence',
+      description: 'Kaira finds another time traveler',
+      pubDate: new Date('2026-03-03'),
+      lang: 'en'
+    }
+  }
+];
+
+const sortedChapters = chapters.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+const latestChapter = sortedChapters[sortedChapters.length - 1];
+const olderChapters = sortedChapters.slice(0, -1).reverse();
+---
+
+<BaseLayout title="Home" lang="en">
+  <main class="container-narrow py-8 md:py-12">
+    <h1 class="mb-6">TimeCrawler</h1>
+    <p class="text-lg text-text-secondary mb-12">
+      Welcome to TimeCrawler, the web serial about Kaira, the Time Walker.
+    </p>
+
+    {latestChapter && (
+      <section class="mb-12">
+        <h2 class="text-2xl mb-4">Latest chapter</h2>
+        <a 
+          href={`/en/chapters/${latestChapter.slug}/`}
+          class="block p-6 border border-accent/20 rounded-lg hover:border-accent transition-colors"
+        >
+          <h3 class="text-xl mb-2 text-text-primary">{latestChapter.data.title}</h3>
+          <p class="text-sm text-text-secondary mb-3">
+            {new Date(latestChapter.data.pubDate).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </p>
+          <p class="text-text-secondary">{latestChapter.data.description}</p>
+        </a>
+      </section>
+    )}
+
+    {olderChapters.length > 0 && (
+      <section>
+        <h2 class="text-2xl mb-4">Previous chapters</h2>
+        <div class="space-y-4">
+          {olderChapters.map((chapter) => (
+            <a 
+              href={`/en/chapters/${chapter.slug}/`}
+              class="block p-4 border border-accent/10 rounded hover:border-accent/30 transition-colors"
+            >
+              <h3 class="text-lg mb-1 text-text-primary">{chapter.data.title}</h3>
+              <p class="text-sm text-text-secondary mb-2">
+                {new Date(chapter.data.pubDate).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+              <p class="text-text-secondary text-sm">{chapter.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</BaseLayout>

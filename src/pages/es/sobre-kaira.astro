@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const pages = await getCollection('sitepages');
+const pageData = pages?.find(p => p.slug === 'es-sobre-kaira');
+
+if (!pageData) {
+  return Astro.redirect('/es/');
+}
+
+const { Content } = await pageData.render();
+---
+
+<BaseLayout title={pageData.data.title} lang="es">
+  <main class="container-narrow py-8 md:py-12">
+    <article>
+      <Content />
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  article :global(h1) {
+    @apply mb-6;
+  }
+  
+  article :global(h2) {
+    @apply mt-8 mb-4;
+  }
+  
+  article :global(p) {
+    @apply mb-4;
+  }
+</style>
